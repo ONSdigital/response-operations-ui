@@ -244,6 +244,8 @@ spec:
             value: "http://wiremock.{{ .Values.namespace }}.svc.cluster.local:8080"
             {{- end}}
           - name: CIR_OAUTH2_CLIENT_ID
-            value: {{ .Values.cir.oauth2ClientId }}     
+            value: {{ .Values.cir.oauth2ClientId }}
+          - name: CIR_SURVEY_EXCLUSIONS
+            value: {{ .Values.cir.survey_exclusion | toJson | quote }}
           resources:
             {{ toYaml .Values.resources | nindent 12 }}

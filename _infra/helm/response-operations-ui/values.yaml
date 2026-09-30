@@ -67,6 +67,7 @@ notify:
 cir:
   enabled: true
   oauth2ClientId: dummy_client_id
+  survey_exclusion: []
 
 dashboard:
   hasIngress: false

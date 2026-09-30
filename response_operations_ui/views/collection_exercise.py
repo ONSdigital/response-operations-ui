@@ -9,9 +9,6 @@ from dateutil.parser import parse
 from flask import (
     Blueprint,
     abort,
-)
-from flask import current_app as app
-from flask import (
     flash,
     jsonify,
     make_response,
@@ -26,6 +23,9 @@ from structlog import wrap_logger
 from werkzeug.wrappers import Response
 from wtforms import ValidationError
 
+from response_operations_ui.common.cir_enabled_for_survey import (
+    is_cir_enabled_for_survey,
+)
 from response_operations_ui.common.date_restriction_generator import (
     get_date_restriction_text,
 )
@@ -284,7 +284,8 @@ def _set_ready_for_live(short_name, period):
 
 def _select_eq_collection_instrument(short_name, period):
     cis_selected = request.form.getlist("checkbox-answer")
-    if app.config["CIR_ENABLED"]:
+    cir_enabled_for_survey = is_cir_enabled_for_survey(short_name)
+    if cir_enabled_for_survey:
         if not cis_selected:
             return _redirect_with_error("Choose one or more EQ formtypes to continue.", period, short_name)
 
@@ -301,7 +302,7 @@ def _select_eq_collection_instrument(short_name, period):
                 )
             return _redirect_with_error(response[1], period, short_name)
 
-        if app.config["CIR_ENABLED"]:
+        if cir_enabled_for_survey:
             return redirect(
                 url_for(
                     "collection_exercise_bp.view_sample_ci_summary",
@@ -829,7 +830,7 @@ def get_view_sample_ci(short_name, period):
     info_panel = request.args.get("info_panel")
 
     # Once the CIR work is complete, this flag can be removed
-    cir_enabled = app.config["CIR_ENABLED"]
+    cir_enabled_for_survey = is_cir_enabled_for_survey(short_name)
 
     back_url = url_for("collection_exercise_bp.view_collection_exercise", short_name=short_name, period=period)
     breadcrumbs = [{"text": f"Back to {period} Collection exercise", "url": back_url}, {}]
@@ -847,7 +848,7 @@ def get_view_sample_ci(short_name, period):
         info_panel=info_panel,
         all_cis_for_survey=all_cis_for_survey,
         breadcrumbs=breadcrumbs,
-        cir_enabled=cir_enabled,
+        cir_enabled=cir_enabled_for_survey,
     )
 
 
