@@ -1,6 +1,8 @@
-from flask import current_app as app
 from flask import url_for
 
+from response_operations_ui.common.cir_enabled_for_survey import (
+    is_cir_enabled_for_survey,
+)
 from response_operations_ui.controllers.collection_instrument_controllers import (
     get_cir_instrument_count,
 )
@@ -249,7 +251,7 @@ def _build_ci_table(
 
             ci_details.append(_ci_details_item("eq", "EQ formtypes", ci_count, eq_url, ci_table_link_text))
 
-            if app.config["CIR_ENABLED"]:
+            if is_cir_enabled_for_survey(short_name):
                 cir_count = get_cir_instrument_count(ce_id)["registry_instrument_count"]
                 if ci_count == 0 or cir_count != ci_count:
                     valid_cir_count = False

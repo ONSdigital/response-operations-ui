@@ -167,6 +167,7 @@ class DevelopmentConfig(Config):
     CIR_OAUTH2_CLIENT_ID = os.getenv("CIR_OAUTH2_CLIENT_ID", "dummy_client_id")
     CIR_ENABLED = strtobool(os.getenv("CIR_ENABLED", "False"))
     CIR_API_PREFIX = os.getenv("CIR_API_PREFIX", "/collection-instruments/metadata")
+    CIR_SURVEY_EXCLUSIONS = os.getenv("CIR_SURVEY_EXCLUSIONS", [])
 
 
 class TestingConfig(DevelopmentConfig):
