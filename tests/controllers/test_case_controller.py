@@ -22,6 +22,8 @@ RU_DETAILS = [
     }
 ]
 
+CE = {"id": "14fb3e68-4dca-46db-bf49-04b84e07e77c", "exerciseRef": "202610"}
+
 project_root = os.path.dirname(os.path.dirname(__file__))
 
 with open(f"{project_root}/test_data/case/case_events.json") as fp:
@@ -30,6 +32,7 @@ url_get_case_events = f"{TestingConfig.CASE_URL}/cases/{case_id}/events"
 url_get_case_groups = f"{TestingConfig.CASE_URL}/casegroups/partyid/{case_id}"
 url_get_cases = f"{TestingConfig.CASE_URL}/cases/partyid/{case_id}"
 url_get_ru_details = f"{TestingConfig.CASE_URL}/casegroups/partyid/{PARTY_ID}/surveyid/{SURVEY_ID}"
+url_get_collection_exercises = f"{TestingConfig.CASE_URL}/casegroups/party/{PARTY_ID}/collectionexercises"
 
 
 class TestCaseControllers(unittest.TestCase):
@@ -135,3 +138,58 @@ class TestCaseControllers(unittest.TestCase):
             with self.app.app_context():
                 with self.assertRaises(ApiError):
                     case_controller.get_case_group_cases_by_party_and_survey_id(PARTY_ID, SURVEY_ID, 1)
+
+    def test_get_case_groups_collection_exercises_by_party_id(self):
+        with responses.RequestsMock() as rsps:
+            rsps.add(
+                rsps.GET,
+                url_get_collection_exercises,
+                json=[
+                    {
+                        "collectionExercise": CE,
+                        "caseGroupStatus": "INPROGRESS",
+                    }
+                ],
+                status=200,
+                content_type="application/json",
+            )
+
+            with self.app.app_context():
+                result = case_controller.get_case_groups_collection_exercises_by_party_id(PARTY_ID)
+
+                self.assertEqual(len(result), 1)
+                self.assertEqual(result[0]["collectionExercise"], CE)
+                self.assertEqual(result[0]["caseGroupStatus"], "INPROGRESS")
+
+    def test_get_case_groups_collection_exercises_by_party_id_with_survey_id(self):
+        with responses.RequestsMock() as rsps:
+            rsps.add(
+                rsps.GET,
+                url_get_collection_exercises,
+                json=[],
+                status=200,
+                content_type="application/json",
+            )
+
+            with self.app.app_context():
+                case_controller.get_case_groups_collection_exercises_by_party_id(
+                    PARTY_ID,
+                    survey_id=SURVEY_ID,
+                )
+
+                request = rsps.calls[0].request
+
+                self.assertIn(f"survey_id={SURVEY_ID}", request.url)
+                self.assertIn("survey_latest=True", request.url)
+
+    def test_get_case_groups_collection_exercises_by_party_id_failure(self):
+        with responses.RequestsMock() as rsps:
+            rsps.add(
+                rsps.GET,
+                url_get_collection_exercises,
+                status=500,
+            )
+
+            with self.app.app_context():
+                with self.assertRaises(ApiError):
+                    case_controller.get_case_groups_collection_exercises_by_party_id(PARTY_ID)

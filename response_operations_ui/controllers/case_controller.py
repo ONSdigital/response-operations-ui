@@ -158,6 +158,39 @@ def get_case_group_cases_by_party_and_survey_id(party_id: str, survey_id: str, l
     return response.json()
 
 
+def get_case_groups_collection_exercises_by_party_id(
+    party_id: str, survey_id: str | None = None, survey_latest: bool = True
+) -> list[dict]:
+    """
+    Finds case groups and their associated collection exercises by party_id
+
+    Optionally filters
+    survey_id - returns only collection exercises for a given survey_id
+    survey_latest - returns only the last collection exercise for each survey
+    """
+
+    logger.info(
+        "Retrieving collection exercises",
+        party_id=party_id,
+        survey_id=survey_id,
+        survey_latest=survey_latest,
+    )
+    url = f'{app.config["CASE_URL"]}/casegroups/party/{party_id}/collectionexercises'
+    params = {"survey_latest": str(survey_latest)}
+
+    if survey_id:
+        params["survey_id"] = survey_id
+
+    response = requests.get(url=url, params=params, auth=app.config["BASIC_AUTH"])
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        logger.exception("Error retrieving collection exercises from case service")
+        raise ApiError(response)
+
+    return response.json()
+
+
 def get_case_group_by_collection_exercise(case_groups, collection_exercise_id):
     return next(
         (case_group for case_group in case_groups if case_group["collectionExerciseId"] == collection_exercise_id), None
