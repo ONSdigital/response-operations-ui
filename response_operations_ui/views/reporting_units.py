@@ -69,19 +69,10 @@ def build_survey_table_data_dict(collection_exercises: list) -> list:
     :return: A sorted list of survey/CE information to provide to the front-end table
     """
     table_data = {}
-    surveys = {}
+    
     for collection_exercise_case_group in collection_exercises:
         ce = collection_exercise_case_group["collectionExercise"]
-        # Keep a mini cache of surveys, so we don't have to keep asking for the same survey data repeatedly
-        survey = surveys.get(ce["surveyId"])
-        if survey is None:
-            survey = get_survey_by_id(ce["surveyId"])
-            surveys[ce["surveyId"]] = survey
-
-        if survey["surveyRef"] in table_data:
-            # Keep the one with the later go-live date
-            if parse_date(table_data[survey["surveyRef"]]["goLive"]) > parse_date(ce["scheduledStartDateTime"]):
-                continue
+        survey = get_survey_by_id(ce["surveyId"])
         table_data[survey["surveyRef"]] = {
             "surveyName": f"{survey['surveyRef']} {survey['shortName']}",
             "surveyId": ce["surveyId"],
