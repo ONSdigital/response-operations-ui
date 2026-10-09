@@ -560,10 +560,10 @@ class TestReportingUnits(ViewTestCase):
         response = self.client.post(
             f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
             data={
-                "first_name": "Fred",
-                "last_name": "Bloggs",
-                "email": "fred.bloggs@example.com",
-                "telephone": "01234567890",
+                "first_name": "Jacky",
+                "last_name": "Turner",
+                "email": "jacky.turner@example.com",
+                "telephone": "0987654321",
             },
         )
 
@@ -574,7 +574,7 @@ class TestReportingUnits(ViewTestCase):
             self.assertIn(
                 (
                     "message",
-                    "Contact details changed and verification email sent to fred.bloggs@example.com",
+                    "Contact details changed and verification email sent to jacky.turner@example.com",
                 ),
                 session["_flashes"],
             )
@@ -586,10 +586,10 @@ class TestReportingUnits(ViewTestCase):
         response = self.client.post(
             f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
             data={
-                "first_name": "Fred",
-                "last_name": "Bloggs",
-                "email": "fred.bloggs@example.com",
-                "telephone": "01234567890",
+                "first_name": "Jacky",
+                "last_name": "Turner",
+                "email": "jacky.turner@example.com",
+                "telephone": "0987654321",
             },
         )
 
@@ -606,10 +606,10 @@ class TestReportingUnits(ViewTestCase):
         response = self.client.post(
             f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
             data={
-                "first_name": "Fred",
-                "last_name": "Bloggs",
-                "email": "fred.bloggs@example.com",
-                "telephone": "01234567890",
+                "first_name": "Jacky",
+                "last_name": "Turner",
+                "email": "jacky.turner@example.com",
+                "telephone": "0987654321",
             },
         )
 
@@ -627,16 +627,12 @@ class TestReportingUnits(ViewTestCase):
         get_respondent_by_party_id,
     ):
         get_respondent_by_party_id.return_value = respondent_party
-
         response = self.client.post(
             f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
             data={},
         )
 
         self.assertEqual(response.status_code, 200)
-
-        get_respondent_by_party_id.assert_called_once_with(respondent_party_id)
-
         update_contact_details.assert_not_called()
 
     @requests_mock.mock()

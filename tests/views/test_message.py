@@ -547,34 +547,31 @@ class TestMessage(ViewTestCase):
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     @patch("flask_login.utils._get_user")
     @patch("response_operations_ui.views.messages.flash")
-    def test_form_submit_with_valid_data(
-        self, mock_request, flash, current_user, mock_get_jwt):
+    def test_form_submit_with_valid_data(self, mock_request, flash, current_user, mock_get_jwt):
         self.before()
         mock_get_jwt.return_value = "mock_jwt"
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
         mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
-        
+
         current_user.return_value.id = 1
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
         with self.app.app_context():
             self.client.post("/messages/create-message", data=self.message_form)
         flash.assert_called_once_with("Message sent.")
-       
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     @patch("flask_login.utils._get_user")
     @patch("response_operations_ui.views.messages.flash")
-    def test_form_submit_with_FDI_data(
-        self, mock_request, flash, current_user, mock_get_jwt):
+    def test_form_submit_with_FDI_data(self, mock_request, flash, current_user, mock_get_jwt):
         mock_get_jwt.return_value = "mock_jwt"
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
         mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
         mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
         current_user.return_value.id = 1
-        
+
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
         with self.app.app_context():
