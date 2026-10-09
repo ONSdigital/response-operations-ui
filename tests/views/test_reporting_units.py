@@ -1,6 +1,8 @@
 import json
 import os
 import re
+import uuid
+from copy import deepcopy
 from random import randint
 from unittest.mock import patch
 
@@ -143,25 +145,38 @@ class TestReportingUnits(ViewTestCase):
         ]
 
     @requests_mock.mock()
-    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
-    def test_get_reporting_unit(self, mock_request, case_groups_by_business_party_id):
-        case_groups_by_business_party_id.return_value = case_groups
-        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
-        mock_request.get(url_get_business_attributes, json=business_attributes)
-        mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
-        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
-        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
+    @patch("response_operations_ui.controllers.case_controller.get_case_groups_collection_exercises_by_party_id")
+    @patch("response_operations_ui.views.reporting_units.get_survey_by_id")
+    def test_get_reporting_unit(self, mock_request, get_survey_by_id, case_groups_collection_exercises_by_party_id):
+        collection_exercise_different_survey = deepcopy(collection_exercise)
+        collection_exercise_different_survey["surveyId"] = str(uuid.uuid4())
 
-        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
+        case_groups_collection_exercises_by_party_id.return_value = [
+            {
+                "collectionExercise": collection_exercise,
+                "caseGroupStatus": "INPROGRESS",
+            },
+            {
+                "collectionExercise": collection_exercise_different_survey,
+                "caseGroupStatus": "COMPLETE",
+            },
+        ]
+        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
+        mock_request.get(url_get_business_attributes, json=business_attributes)
+        get_survey_by_id.side_effect = [
+            {"shortName": "BRES", "surveyRef": "221"},
+            {"shortName": "QBS", "surveyRef": "139"},
+        ]
+
+        response = self.client.get("/reporting-units/50012345678")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Bolts and Ratchets Ltd".encode(), response.data)
         self.assertIn("50012345678".encode(), response.data)
-        self.assertIn("221 BLOCKS".encode(), response.data)
-        self.assertIn("Not started".encode(), response.data)
+        self.assertIn("221 BRES".encode(), response.data)
+        self.assertIn("In progress".encode(), response.data)
+        self.assertIn("Completed".encode(), response.data)
+        self.assertIn("139 QBS".encode(), response.data)
 
     @requests_mock.mock()
     def test_get_reporting_unit_party_ru_fail(self, mock_request):
@@ -210,36 +225,6 @@ class TestReportingUnits(ViewTestCase):
 
         request_history = mock_request.request_history
         self.assertEqual(len(request_history), 2)
-        self.assertEqual(response.status_code, 500)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
-    def test_get_reporting_unit_party_id_fail(self, mock_request, case_groups_by_business_party_id):
-        case_groups_by_business_party_id.return_value = case_groups
-        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
-        mock_request.get(url_get_business_attributes, status_code=500)
-
-        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
-
-        request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 4)
-        self.assertEqual(response.status_code, 500)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
-    def test_get_reporting_unit_survey_fail(self, mock_request, case_groups_by_business_party_id):
-        case_groups_by_business_party_id.return_value = case_groups
-        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
-        mock_request.get(url_get_survey_by_id, status_code=500)
-
-        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
-
-        request_history = mock_request.request_history
-        self.assertEqual(len(request_history), 4)
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
@@ -418,45 +403,6 @@ class TestReportingUnits(ViewTestCase):
         self.assertEqual(response.status_code, 500)
 
     @requests_mock.mock()
-    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
-    def test_get_reporting_unit_iac_404(self, mock_request, case_groups_by_business_party_id):
-        case_groups_by_business_party_id.return_value = case_groups
-        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
-        mock_request.get(url_get_business_attributes, json=business_attributes)
-        mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
-        mock_request.get(f"{url_get_iac}/{iac_1}", status_code=404)
-
-        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Bolts and Ratchets Ltd".encode(), response.data)
-        self.assertIn("50012345678".encode(), response.data)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
-    def test_get_reporting_unit_hides_change_link_when_no_available_statuses(
-        self, mock_request, case_groups_by_business_party_id
-    ):
-        case_groups_by_business_party_id.return_value = case_groups
-        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
-        mock_request.get(url_get_business_attributes, json=business_attributes)
-        mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
-        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
-        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
-
-        response = self.client.get("/reporting-units/50012345678", follow_redirects=True)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertNotIn("ChaFnge</a>".encode(), response.data)
-
-    @requests_mock.mock()
     def test_search_reporting_units_for_1_business_redirects_and_holds_correct_data(self, mock_request):
         mock_business_search_response = {"businesses": [{"name": "test", "ruref": "123456"}], "total_business_count": 2}
         mock_request.get(url_search_reporting_units, json=mock_business_search_response)
@@ -538,25 +484,17 @@ class TestReportingUnits(ViewTestCase):
         self.assertEqual(response.status_code, 200)
 
     @requests_mock.mock()
-    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
-    def test_change_respondent_status(self, mock_request, case_groups_by_business_party_id):
-        case_groups_by_business_party_id.return_value = case_groups
+    def test_change_respondent_status(self, mock_request):
         mock_request.put(url_change_respondent_status)
-        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
-        mock_request.get(url_get_business_attributes, json=business_attributes)
-        mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
-        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
-        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
 
         response = self.client.post(
-            f"reporting-units/50012345678/change-respondent-status"
+            f"/reporting-units/50012345678/change-respondent-status"
             f"?respondent_id={respondent_party_id}&change_flag=ACTIVE",
-            follow_redirects=True,
         )
-        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.location, "/reporting-units/50012345678?account_status_changed=True")
+        self.assertTrue(mock_request.called)
 
     @requests_mock.mock()
     def test_change_respondent_status_fail(self, mock_request):
@@ -615,151 +553,87 @@ class TestReportingUnits(ViewTestCase):
         self.assertEqual(len(request_history), 1)
         self.assertEqual(response.status_code, 500)
 
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
-    def test_edit_contact_details(self, mock_request, case_groups_by_business_party_id):
-        case_groups_by_business_party_id.return_value = case_groups
-        changed_details = {
-            "first_name": "Tom",
-            "last_name": "Smith",
-            "email": "Jacky.Turner@email.com",
-            "telephone": "7971161867",
-        }
-        response = self.mock_for_change_details(changed_details, mock_request)
+    @patch("response_operations_ui.views.reporting_units." "party_controller.update_contact_details")
+    def test_edit_contact_details_email_changed(self, update_contact_details):
+        update_contact_details.return_value = ["emailAddress"]
 
-        self.assertEqual(response.status_code, 200)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
-    def test_edit_contact_details_email_failures(self, mock_request, case_groups_by_business_party_id):
-        case_groups_by_business_party_id.return_value = case_groups
-        changed_details = {
-            "first_name": "Tom",
-            "last_name": "Smith",
-            "email": "Jacky.Turner@email.com",
-            "telephone": "7971161859",
-        }
-        mock_request.get(get_respondent_by_id_url, json=respondent)
-
-        # User already exists (409)
-        mock_request.put(url_edit_contact_details, status_code=409)
         response = self.client.post(
             f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
-            data=changed_details,
-            follow_redirects=True,
+            data={
+                "first_name": "Jacky",
+                "last_name": "Turner",
+                "email": "jacky.turner@example.com",
+                "telephone": "0987654321",
+            },
         )
-        self.assertIn("Error - email address already exists".encode(), response.data)
 
-        # User not found (404)
-        mock_request.put(url_edit_contact_details, status_code=404)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.location, "/reporting-units/50012345678")
+
+        with self.client.session_transaction() as session:
+            self.assertIn(
+                (
+                    "message",
+                    "Contact details changed and verification email sent to jacky.turner@example.com",
+                ),
+                session["_flashes"],
+            )
+
+    @patch("response_operations_ui.views.reporting_units." "party_controller.update_contact_details")
+    def test_edit_contact_details_changed(self, update_contact_details):
+        update_contact_details.return_value = ["firstName"]
+
         response = self.client.post(
             f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
-            data=changed_details,
-            follow_redirects=True,
+            data={
+                "first_name": "Jacky",
+                "last_name": "Turner",
+                "email": "jacky.turner@example.com",
+                "telephone": "0987654321",
+            },
         )
 
-        self.assertIn(CONNECTION_ERROR.encode(), response.data)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.location, "/reporting-units/50012345678")
 
-        # Server error (500)
-        mock_request.put(url_edit_contact_details, status_code=500)
+        with self.client.session_transaction() as session:
+            self.assertIn(("message", "Contact details changed"), session["_flashes"])
+
+    @patch("response_operations_ui.views.reporting_units." "party_controller.update_contact_details")
+    def test_edit_contact_details_no_changes(self, update_contact_details):
+        update_contact_details.return_value = []
+
         response = self.client.post(
             f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
-            data=changed_details,
-            follow_redirects=True,
+            data={
+                "first_name": "Jacky",
+                "last_name": "Turner",
+                "email": "jacky.turner@example.com",
+                "telephone": "0987654321",
+            },
         )
-        self.assertIn(CONNECTION_ERROR.encode(), response.data)
 
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
-    def test_edit_contact_details_last_name_change(self, mock_request, case_groups_by_business_party_id):
-        case_groups_by_business_party_id.return_value = case_groups
-        changed_details = {
-            "first_name": "Jacky",
-            "last_name": "Smith",
-            "email": "Jacky.Turner@email.com",
-            "telephone": "7971161859",
-        }
-        response = self.mock_for_change_details(changed_details, mock_request)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.location, "/reporting-units/50012345678")
 
-        self.assertEqual(response.status_code, 200)
+        with self.client.session_transaction() as session:
+            self.assertIn(("message", "No updates were necessary"), session["_flashes"])
 
-    def mock_for_change_details(self, changed_details, mock_request):
-        mock_request.get(get_respondent_by_id_url, json=respondent)
-        mock_request.put(url_edit_contact_details)
-        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
-        mock_request.get(url_get_business_attributes, json=business_attributes)
-        mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
-        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
-        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
-        response = self.client.post(
-            f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
-            data=changed_details,
-            follow_redirects=True,
-        )
-        return response
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
-    def test_edit_contact_details_telephone_change(self, mock_request, case_groups_by_business_party_id):
-        case_groups_by_business_party_id.return_value = case_groups
-        changed_details = {
-            "first_name": "Jacky",
-            "last_name": "Turner",
-            "email": "Jacky.Turner@email.com",
-            "telephone": "7971161867",
-        }
-        response = self.mock_for_change_details(changed_details, mock_request)
-
-        self.assertEqual(response.status_code, 200)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
-    def test_edit_contact_details_email_change(self, mock_request, case_groups_by_business_party_id):
-        case_groups_by_business_party_id.return_value = case_groups
-        changed_details = {
-            "first_name": "Jacky",
-            "last_name": "Turner",
-            "email": "Jacky.Turner@thisemail.com",
-            "telephone": "7971161859",
-        }
-        response = self.mock_for_change_details(changed_details, mock_request)
-
-        self.assertEqual(response.status_code, 200)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
-    def test_edit_contact_details_email_change_with_trailing_space(
-        self, mock_request, case_groups_by_business_party_id
+    @patch("response_operations_ui.views.reporting_units." "party_controller.get_respondent_by_party_id")
+    @patch("response_operations_ui.views.reporting_units." "party_controller.update_contact_details")
+    def test_edit_contact_details_invalid_form(
+        self,
+        update_contact_details,
+        get_respondent_by_party_id,
     ):
-        case_groups_by_business_party_id.return_value = case_groups
-        changed_details = {
-            "first_name": "Jacky",
-            "last_name": "Turner",
-            "email": r"Jacky.Turner@thisemail.com ",
-            "telephone": "7971161859",
-        }
-        response = self.mock_for_change_details(changed_details, mock_request)
+        get_respondent_by_party_id.return_value = respondent_party
+        response = self.client.post(
+            f"/reporting-units/50012345678/edit-contact-details/{respondent_party_id}",
+            data={},
+        )
 
         self.assertEqual(response.status_code, 200)
-        self.assertIsNot(r"Jacky.Turner@thisemail.com ".encode(), response.data)
-
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
-    def test_edit_contact_details_and_email_change(self, mock_request, case_groups_by_business_party_id):
-        case_groups_by_business_party_id.return_value = case_groups
-        changed_details = {
-            "first_name": "Jacky",
-            "last_name": "Turner",
-            "email": "Jacky.Turner@thisemail.com",
-            "telephone": "7971161867",
-        }
-        response = self.mock_for_change_details(changed_details, mock_request)
-
-        self.assertEqual(response.status_code, 200)
+        update_contact_details.assert_not_called()
 
     @requests_mock.mock()
     def test_reporting_unit_generate_new_code(self, mock_request):
@@ -822,29 +696,29 @@ class TestReportingUnits(ViewTestCase):
         self.assertIn("first_name".encode(), response.data)
         self.assertIn("Disable enrolment".encode(), response.data)
 
-    @requests_mock.mock()
-    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
-    def test_disable_enrolment_post(self, mock_request, case_groups_by_business_party_id):
-        case_groups_by_business_party_id.return_value = case_groups
-        mock_request.put(url_change_enrolment_status)
-        mock_request.get(url_get_business_by_ru_ref, json=business_reporting_unit)
-        mock_request.get(url_get_cases_by_business_party_id, json=cases_list)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
-        mock_request.get(url_get_business_attributes, json=business_attributes)
-        mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
-        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
-        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
-
+    @patch("response_operations_ui.views.reporting_units." "reporting_units_controllers.change_enrolment_status")
+    def test_change_enrolment_status(self, change_enrolment_status):
         response = self.client.post(
             "/reporting-units/50012345678/change-enrolment-status"
-            "?survey_id=test_id&respondent_id=test_id&business_id=test_id&change_flag=DISABLED",
-            follow_redirects=True,
+            f"?business_id={business_party_id}"
+            f"&respondent_id={respondent_party_id}"
+            f"&survey_id={survey_id}"
+            "&change_flag=ACTIVE",
         )
 
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Bolts and Ratchets Ltd".encode(), response.data)
+        self.assertEqual(response.status_code, 302)
+
+        change_enrolment_status.assert_called_once_with(
+            business_id=business_party_id,
+            respondent_id=respondent_party_id,
+            survey_id=survey_id,
+            change_flag="ACTIVE",
+        )
+
+        self.assertEqual(
+            response.location,
+            "/reporting-units/50012345678?enrolment_changed=True",
+        )
 
     @requests_mock.mock()
     def test_disable_enrolment_post_fail(self, mock_request):

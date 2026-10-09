@@ -52,24 +52,15 @@ def view_reporting_unit(ru_ref):
         else:
             raise api_error
 
-    case_groups = case_controller.get_case_groups_by_business_party_id(reporting_unit["id"])
-
-    # Get all collection exercises for retrieved case groups
-    collection_exercise_ids = {case_group["collectionExerciseId"] for case_group in case_groups}
-    collection_exercises = [get_collection_exercise_by_id(ce_id) for ce_id in collection_exercise_ids]
-    live_collection_exercises = [
-        ce for ce in collection_exercises if parse_date(ce["scheduledStartDateTime"]) < datetime.now(timezone.utc)
-    ]
-
-    survey_table_data = build_survey_table_data_dict(live_collection_exercises, case_groups)
-
+    collection_exercises = case_controller.get_case_groups_collection_exercises_by_party_id(reporting_unit["id"])
+    survey_table_data = build_survey_table_data_dict(collection_exercises)
     breadcrumbs = create_reporting_unit_breadcrumbs(ru_ref)
 
     logger.info("Successfully gathered data to view reporting unit", ru_ref=ru_ref)
     return render_template("reporting-unit.html", ru=reporting_unit, surveys=survey_table_data, breadcrumbs=breadcrumbs)
 
 
-def build_survey_table_data_dict(collection_exercises: list, case_groups: list) -> list:
+def build_survey_table_data_dict(collection_exercises: list) -> list:
     """
     Creates the dictionary of survey & CE information for the front-end table to display
 
@@ -78,25 +69,17 @@ def build_survey_table_data_dict(collection_exercises: list, case_groups: list) 
     :return: A sorted list of survey/CE information to provide to the front-end table
     """
     table_data = {}
-    surveys = {}
-    for ce in collection_exercises:
-        # Keep a mini cache of surveys, so we don't have to keep asking for the same survey data repeatedly
-        survey = surveys.get(ce["surveyId"])
-        if survey is None:
-            survey = get_survey_by_id(ce["surveyId"])
-            surveys[ce["surveyId"]] = survey
 
-        if survey["surveyRef"] in table_data:
-            # Keep the one with the later go-live date
-            if parse_date(table_data[survey["surveyRef"]]["goLive"]) > parse_date(ce["scheduledStartDateTime"]):
-                continue
+    for collection_exercise_case_group in collection_exercises:
+        ce = collection_exercise_case_group["collectionExercise"]
+        survey = get_survey_by_id(ce["surveyId"])
         table_data[survey["surveyRef"]] = {
             "surveyName": f"{survey['surveyRef']} {survey['shortName']}",
             "surveyId": ce["surveyId"],
             "shortName": survey["shortName"],
             "period": ce["exerciseRef"],
             "goLive": ce["scheduledStartDateTime"],
-            "caseStatus": map_ce_response_status(get_case_group_status_by_collection_exercise(case_groups, ce["id"])),
+            "caseStatus": map_ce_response_status(collection_exercise_case_group["caseGroupStatus"]),
         }
     return sorted(table_data.items(), key=lambda t: t[0])
 

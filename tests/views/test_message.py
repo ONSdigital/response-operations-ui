@@ -544,63 +544,39 @@ class TestMessage(ViewTestCase):
     }
 
     @requests_mock.mock()
-    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     @patch("flask_login.utils._get_user")
-    def test_form_submit_with_valid_data(
-        self, mock_request, current_user, mock_get_jwt, case_groups_by_business_party_id
-    ):
+    @patch("response_operations_ui.views.messages.flash")
+    def test_form_submit_with_valid_data(self, mock_request, flash, current_user, mock_get_jwt):
         self.before()
-        case_groups_by_business_party_id.return_value = case_groups_list
         mock_get_jwt.return_value = "mock_jwt"
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
-        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        mock_request.get(url_get_business_by_ru_ref + ru_ref, json=business_by_ru_ref_json)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
-        mock_request.get(url_get_business_attributes, json=business_attributes)
-        mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
-        mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
-        mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
         mock_request.get(url_permission_url, json=user_permission_admin_json, status_code=200)
         mock_request.post(url_sign_in_data, json={"access_token": self.access_token}, status_code=201)
+
         current_user.return_value.id = 1
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
         with self.app.app_context():
-            response = self.client.post("/messages/create-message", data=self.message_form, follow_redirects=True)
-
-        self.assertIn("Message sent.".encode(), response.data)
-        self.assertIn("Messages".encode(), response.data)
+            self.client.post("/messages/create-message", data=self.message_form)
+        flash.assert_called_once_with("Message sent.")
 
     @requests_mock.mock()
-    @patch("response_operations_ui.controllers.case_controller.get_case_groups_by_business_party_id")
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
     @patch("flask_login.utils._get_user")
-    def test_form_submit_with_FDI_data(
-        self, mock_request, current_user, mock_get_jwt, case_groups_by_business_party_id
-    ):
+    @patch("response_operations_ui.views.messages.flash")
+    def test_form_submit_with_FDI_data(self, mock_request, flash, current_user, mock_get_jwt):
         mock_get_jwt.return_value = "mock_jwt"
         mock_request.post(url_send_message, json=threads_no_unread_list, status_code=201)
-        mock_request.get(url_get_surveys_list, json=self.surveys_list_json)
-        mock_request.get(url_get_business_by_ru_ref + ru_ref, json=business_by_ru_ref_json)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_1}", json=collection_exercise)
-        mock_request.get(f"{url_get_collection_exercise_by_id}/{collection_exercise_id_2}", json=collection_exercise_2)
-        mock_request.get(url_get_business_attributes, json=business_attributes)
-        mock_request.get(url_get_survey_by_id, json=survey)
-        mock_request.get(url_get_respondent_party_by_list, json=respondent_party_list)
         mock_request.get(f"{url_get_iac}/{iac_1}", json=iac)
         mock_request.get(f"{url_get_iac}/{iac_2}", json=iac)
         current_user.return_value.id = 1
-        case_groups_by_business_party_id.return_value = []
+
         with self.client.session_transaction() as session:
             session["user_id"] = "test-id"
         with self.app.app_context():
-            response = self.client.post("/messages/create-message", data=self.FDI_message, follow_redirects=True)
-
-        self.assertIn("Message sent.".encode(), response.data)
-        self.assertIn("Messages".encode(), response.data)
+            self.client.post("/messages/create-message", data=self.FDI_message, follow_redirects=True)
+        flash.assert_called_once_with("Message sent.")
 
     @requests_mock.mock()
     @patch("response_operations_ui.controllers.message_controllers._get_jwt")
