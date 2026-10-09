@@ -69,7 +69,7 @@ def build_survey_table_data_dict(collection_exercises: list) -> list:
     :return: A sorted list of survey/CE information to provide to the front-end table
     """
     table_data = {}
-    
+
     for collection_exercise_case_group in collection_exercises:
         ce = collection_exercise_case_group["collectionExercise"]
         survey = get_survey_by_id(ce["surveyId"])
