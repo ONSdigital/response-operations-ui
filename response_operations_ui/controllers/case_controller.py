@@ -185,8 +185,9 @@ def get_case_groups_collection_exercises_by_party_id(
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError:
-        logger.exception("Error retrieving collection exercises from case service", 
-                         party_id=party_id, survey_id=survey_id)
+        logger.exception(
+            "Error retrieving collection exercises from case service", party_id=party_id, survey_id=survey_id
+        )
         raise ApiError(response)
 
     return response.json()
