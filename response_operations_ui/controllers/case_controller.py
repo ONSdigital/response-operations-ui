@@ -175,7 +175,7 @@ def get_case_groups_collection_exercises_by_party_id(
         survey_id=survey_id,
         survey_latest=survey_latest,
     )
-    url = f'{app.config["CASE_URL"]}/casegroups/party/{party_id}/collectionexercises'
+    url = f'{app.config["CASE_URL"]}/casegroups/partyid/{party_id}/collectionexercises'
     params = {"survey_latest": str(survey_latest)}
 
     if survey_id:
