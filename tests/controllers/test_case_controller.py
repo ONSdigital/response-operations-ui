@@ -32,7 +32,7 @@ url_get_case_events = f"{TestingConfig.CASE_URL}/cases/{case_id}/events"
 url_get_case_groups = f"{TestingConfig.CASE_URL}/casegroups/partyid/{case_id}"
 url_get_cases = f"{TestingConfig.CASE_URL}/cases/partyid/{case_id}"
 url_get_ru_details = f"{TestingConfig.CASE_URL}/casegroups/partyid/{PARTY_ID}/surveyid/{SURVEY_ID}"
-url_get_collection_exercises = f"{TestingConfig.CASE_URL}/casegroups/party/{PARTY_ID}/collectionexercises"
+url_get_collection_exercises = f"{TestingConfig.CASE_URL}/casegroups/partyid/{PARTY_ID}/collectionexercises"
 
 
 class TestCaseControllers(unittest.TestCase):
